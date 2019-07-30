@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<head>      
+      <style>
+            html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none} * { box-sizing: content-box; }
+            .title {  position: relative; -webkit-perspective: 100px; /* Safari 4-8  */ perspective: 100px; overflow: hidden; }
+            h1 { text-align: center; -webkit-transform-style: preserve-3d; /* Safari 3-8  */ -webkit-transform: rotateX(45deg); /* Safari 3-8  */ transform-style: preserve-3d; transform: rotateX(45deg);  }
+            h1:after { content: "Search your character"; display: block; }
+            .search { display: block; text-align: center; }
+            .search:after { font-size: 30px; content: "👀"; padding: 8px 10px; border-radius: 50px; transform: translateX(-29px); background: #002bff; position: absolute; }
+            .search__input { border: 2px solid #002bff; outline: 0; height: 47px; width: 200px; transform: scaleX(0); border-radius: 25px 25px 25px 25px; transition: all .2s ease-in-out; transform-origin: center right; padding: 0 10px; }
+            .search:hover .search__input { transform: scaleX(1); }
+            .image {position: relative; }
+            .image__item {width: 100%; padding-top: 100%; background: #efefef; border: 1px solid #ccc; background-size: cover; background-position: 50%;}
+            .image__item:hover:before, .image__item:hover:after { opacity: 1; }
+            .image__item:before { content: ""; position: absolute; background: rgba(255,255,255,0.5); width: 100%; height: 100%; top: 0; left: 0; opacity: 0; transition: all .2s ease-in-out; }
+            .image__item:after { content: attr(data-name); position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); opacity: 0; transition: all .2s ease-in-out; font-size: 25px; text-align: center; }
+            .lds-ripple { display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%,100%);
+  width: 64px;
+  height: 64px;
+}
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid #002bff;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 28px;
+    left: 28px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: -1px;
+    left: -1px;
+    width: 58px;
+    height: 58px;
+    opacity: 0;
+  }
+}
+
+            </style>
+            <link rel="preconnect" href="https://fonts.gstatic.com" />
+            <link rel="preconnect" href="http://i.annihil.us" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+      <div class="title"><h1>Marvel comic db</h1></div>
+      <div class="search"><input class="search__input" type="search" placeholder="Search character" /></div>
+</body>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+     
+
+
+      import('./index.js').then(mod => {
+            const {default: getChart, addLoaders, loadCharts, loadFonts, onSearch, getCharacters } = mod;
+            loadFonts();
+            addLoaders();
+            /*
+            function recursive() {
+                  requestIdleCallback(() => {
+                        getCharacters().then(loadCharts);
+                        recursive();
+                  })
+            }
+            */
+            getCharacters().then(res => {
+                  loadCharts(res);
+                  recursive();
+            })
+
+            document.querySelector('.search__input').addEventListener('keyup', (ev) => {
+                  onSearch(ev.target.value).forEach(item => {
+                        const elem = document.querySelector(`.image__item[data-name='${item.name.toLowerCase()}']`);
+                        elem.parentElement.style.display = item.isHidden ? 'none' : 'inline-block';
+                  })
+            })
+      })
+})
+</script>
+</html>
